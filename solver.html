@@ -585,7 +585,7 @@ header .title {
   #board {
     width: calc(84vh - 216px);
     height: 100%;
-    max-width: 95%;
+    max-width: 90%;
     max-height: calc(100vh - 260px);
   }
 }
@@ -663,6 +663,7 @@ header .title {
 }
 .tile[data-state='-2'] {
   border: 2px solid var(--color-tone-4);
+  color: var(--color-tone-7);
 }
 .tile[data-state='-1'] {
   background-color: var(--color-tone-7);
@@ -728,7 +729,6 @@ header .title {
 #keyboard .row {
   padding: 0 8px;
   display: flex;
-  //width: 100%;
   margin: 0 auto 8px;
   /* https://stackoverflow.com/questions/46167604/ios-html-disable-double-tap-to-zoom */
   touch-action: manipulation;
@@ -1010,7 +1010,7 @@ input:checked + .slider:before {
 
 </head>
 
-<body class="">
+<body class="nightmode">
 
 <div id="game">
 
