@@ -476,18 +476,37 @@ function initializeTheme() {
     document.body.classList.add('colorblind');
   }
 }
-
+function toggleStartInfo(val) {
+  if (val == true) {
+    localStorage.setItem('startInfo', 'enabled');
+  } else {
+    localStorage.setItem('startInfo', 'disabled');
+  }
+}
+function startFunctions() {
+  if (localStorage.startInfo == 'disabled') {
+    document.getElementById('startInfo').checked = false;
+    return;
+  } else {
+    setTimeout(function(){
+      openOverlay('help'); 
+      runExample1(); 
+      runExample2();
+      runExample3();
+    }, 300);
+  }
+}
 </script>
 
 <style>
 
+/* Similar font to what the NYTimes uses */
 @font-face {
   font-family: 'KarnakPro-CondensedBlack';
   src: url('karnakpro-condensedblack.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
-
 
 /* Global Styles & Colors */
 :root {
@@ -1348,6 +1367,18 @@ input:checked + .slider:before {
       </div>
     </div>
 
+    <div class="instructions">
+      <div class="text">
+        <div class="description">Show  this page on startup?</div>
+      </div>
+      <div>
+        <label class="switch">
+          <input class="check-box" onClick="toggleStartInfo(this.checked)" id="startInfo" type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1394,12 +1425,7 @@ input:checked + .slider:before {
 </div>
 
 <script>
-setTimeout(function(){
-  openOverlay('help'); 
-  runExample1(); 
-  runExample2();
-  runExample3();
-}, 300);
+  startFunctions();
 </script>
 
 </body>
