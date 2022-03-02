@@ -266,6 +266,7 @@ function solveWord(curPoints) {
   overlayEl.classList.add('open');
 }
 
+var numVisits = 1;
 var hardMode = false;
 var curRowNum = 1;
 var curLetters = "";
@@ -415,8 +416,10 @@ function switchThemes(el) {
   var body = document.body;
   if (el.checked) {
     body.classList.add(el.id);
+    localStorage.setItem(el.id, 'enabled');
   } else {
     body.classList.remove(el.id);
+    localStorage.setItem(el.id, 'disabled');
   }
 }
 function runExample1() {
@@ -449,6 +452,29 @@ function runExample3() {
 }
 function toggleHardMode(hardmodeVal) {
   hardMode = hardmodeVal;
+  if (hardmodeVal == true) {
+    localStorage.setItem('hardmode', 'enabled');
+  } else {
+    localStorage.setItem('hardmode', 'disabled');
+  }
+}
+function initializeTheme() {
+  if (localStorage.numVisits > 0) {
+    numVisits = parseInt(localStorage.numVisits) + 1;
+  }
+  localStorage.setItem('numVisits', numVisits);
+  if (localStorage.hardmode == 'enabled') {
+    document.getElementById('hardmode').checked = true;
+    hardMode = true;
+  }
+  if (localStorage.nightmode == 'enabled') {
+    document.getElementById('nightmode').checked = true;
+    document.body.classList.add('nightmode');
+  }
+  if (localStorage.colorblind == 'enabled') {
+    document.getElementById('colorblind').checked = true;
+    document.body.classList.add('colorblind');
+  }
 }
 
 </script>
@@ -1059,7 +1085,7 @@ input:checked + .slider:before {
 
 </head>
 
-<body>
+<body onLoad="initializeTheme();">
 
 <div id="game">
 
