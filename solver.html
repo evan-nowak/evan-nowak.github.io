@@ -239,6 +239,14 @@ function solveWord(curPoints) {
   answerList = removeWordsWithBadLetters(answerList, badLetters);
   answerList = removeWordsWithLettersInWrongPlace(answerList, curLetters, curPoints);
 
+  if (hardMode) {
+    guessList = removeWordsWithoutCorrectLetters(guessList, correctLetters);
+    guessList = removeWordsWithoutGoodLetters(guessList, goodLetters);
+    guessList = removeWordsWithBadDoubles(guessList, badDoubles);
+    guessList = removeWordsWithBadLetters(guessList, badLetters);
+    guessList = removeWordsWithLettersInWrongPlace(guessList, curLetters, curPoints);    
+  }
+
   var tempLetters = goodLetters.concat(correctLetters.join('').split(''));
   tempLetters = tempLetters.filter(onlyUnique);
 
@@ -258,6 +266,7 @@ function solveWord(curPoints) {
   overlayEl.classList.add('open');
 }
 
+var hardMode = false;
 var curRowNum = 1;
 var curLetters = "";
 var goodLetters = [];
@@ -437,7 +446,9 @@ function runExample3() {
   setTimeout(function(){
     enter.disabled = false;
   }, 1700);
-
+}
+function toggleHardMode(hardmodeVal) {
+  hardMode = hardmodeVal;
 }
 
 </script>
@@ -1190,6 +1201,17 @@ input:checked + .slider:before {
   </header>
 
   <div class="content">
+
+    <div class="setting">
+      <div class="text">
+        <div class="title">Hard Mode</div>
+        <div class="description">Any revealed hints must be used in subsequent guesses</div>
+      </div>
+      <label class="switch">
+        <input class="check-box" onClick="toggleHardMode(this.checked)" id="hardmode" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
 
     <div class="setting">
       <div class="text">
