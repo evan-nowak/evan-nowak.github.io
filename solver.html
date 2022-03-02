@@ -311,6 +311,8 @@ function getLetters (letter) {
     solveWord(curPoints);
     curRowNum += 1;
     curLetters = "";
+    var enterBtn = document.getElementById("enter");
+    enterBtn.disabled = true;
 
   } else if (curLetters != "" & curLetter == "BACKSPACE") {
     curLetters = curLetters.slice(0, -1);
@@ -351,6 +353,15 @@ function setColor(el) {
   } else if (el.dataset.state != -2) {
     el.dataset.state = (el.dataset.state + 1) % 3;
   }
+  var curCells = el.parentElement.getElementsByClassName("tile");
+  var enterBtn = document.getElementById("enter");
+  for (i=0; i<5; i++) {
+    if (curCells[i].dataset.state < 0) {
+      enterBtn.disabled = true;
+      return;
+    }
+  }
+  enterBtn.disabled = false;
 }
 
 function openOverlay(overlayName) {
@@ -382,6 +393,8 @@ function closeOverlay(el) {
     for(i=0; i<5; i++){
       tiles[i].dataset.state = -1;
     }
+    var enter = document.getElementById('exampleEnter');
+    enter.disabled = true;
   }
 
   parentEl.classList.add('closing');
@@ -418,6 +431,12 @@ function runExample2() {
       }, 100*i+1000);
     }(i, tiles));
   } 
+}
+function runExample3() {
+  var enter = document.getElementById('exampleEnter');
+  setTimeout(function(){
+    enter.disabled = false;
+  }, 1700);
 
 }
 
@@ -492,6 +511,8 @@ function runExample2() {
   --key-bg-correct: var(--color-correct);
   --key-bg-absent: var(--color-absent);
   --modal-content-bg: var(--color-tone-7);
+  --key-bg-disabled: var(--color-tone-5);
+  --key-text-disabled: var(--color-tone-3);
 }
 .nightmode {
   --color-present: var(--darkendYellow);
@@ -505,6 +526,8 @@ function runExample2() {
   --key-bg-correct: var(--color-correct);
   --key-bg-absent: var(--color-absent);
   --modal-content-bg: var(--color-tone-7);
+  --key-bg-disabled: var(--color-tone-5);
+  --key-text-disabled: var(--color-tone-3);
 }
 .colorblind {
   --color-correct: var(--orange);
@@ -733,7 +756,7 @@ header .title {
   /* https://stackoverflow.com/questions/46167604/ios-html-disable-double-tap-to-zoom */
   touch-action: manipulation;
 }
-#keyboard .row button {
+#keyboard .row button, #exampleEnter {
   font-family: inherit;
   font-weight: bold;
   border: 0;
@@ -889,8 +912,9 @@ header .title {
 .instructions {
   width: 100%;
 }
-.instructions .title {
+.instructions .text .title {
   width: 100%;
+  font-size: 16px;
 }
 .instructions .text {
   width: 50%;
@@ -1005,6 +1029,17 @@ input:checked + .slider:before {
     width: 95%;
   }
 }
+#keyboard button:disabled, #keyboard button[disabled], #exampleEnter:disabled, #exampleEnter[disabled] {
+  background: var(--key-bg-disabled);
+  color: var(--key-text-disabled);
+}
+#exampleEnter {
+  height: 50px;
+  width: 75px;
+}
+#exampleEnter:disabled, #exampleEnter[disabled], #keyboard button:disabled, #keyboard button[disabled] {
+  cursor: not-allowed;
+}
 
 </style>
 
@@ -1018,7 +1053,7 @@ input:checked + .slider:before {
 
 <header>
   <div class="menu">
-    <button id="help-button" onClick="openOverlay(this.dataset.label); runExample1(); runExample2();" class="icon" data-label="help">
+    <button id="help-button" onClick="openOverlay(this.dataset.label); runExample1(); runExample2(); runExample3();" class="icon" data-label="help">
       <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
         <path fill="var(--color-tone-1)" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"></path>
       </svg>
@@ -1120,7 +1155,7 @@ input:checked + .slider:before {
     <div class="spacer half"></div>
   </div>
   <div class="row">
-    <button data-key="ENTER" class="one-and-a-half" onclick="getLetters(this.dataset.key)">enter</button>
+    <button id="enter" data-key="ENTER" class="one-and-a-half" onclick="getLetters(this.dataset.key)" disabled>enter</button>
     <button class="one" data-key="Z" onclick="getLetters(this.dataset.key)">z</button>
     <button class="one" data-key="X" onclick="getLetters(this.dataset.key)">x</button>
     <button class="one" data-key="C" onclick="getLetters(this.dataset.key)">c</button>
@@ -1228,7 +1263,30 @@ input:checked + .slider:before {
 
     <div class="instructions">
       <div class="text">
-        <div class="title">Hit "enter" and the Solver will tell you possible answers and the optimal next guess</div>
+        <div class="title">When all of the letters have been colored, the ENTER button will activate</div>
+      </div>
+      <div>
+        <button id="exampleEnter" disabled>enter</button>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">Hit ENTER and the Solver will tell you possible answers and the optimal next guess</div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">Click on the crown to return to the Solver page</div>
+      </div>
+      <div>
+        <button id="solver-button" onClick="openOverlay(this.dataset.label)" class="icon" data-label="answers">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 576 512">
+            <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+            <path fill="var(--color-tone-1)" d="M576 136c0 22.09-17.91 40-40 40c-.248 0-.4551-.1266-.7031-.1305l-50.52 277.9C482 468.9 468.8 480 453.3 480H122.7c-15.46 0-28.72-11.06-31.48-26.27L40.71 175.9C40.46 175.9 40.25 176 39.1 176c-22.09 0-40-17.91-40-40S17.91 96 39.1 96s40 17.91 40 40c0 8.998-3.521 16.89-8.537 23.57l89.63 71.7c15.91 12.73 39.5 7.544 48.61-10.68l57.6-115.2C255.1 98.34 247.1 86.34 247.1 72C247.1 49.91 265.9 32 288 32s39.1 17.91 39.1 40c0 14.34-7.963 26.34-19.3 33.4l57.6 115.2c9.111 18.22 32.71 23.4 48.61 10.68l89.63-71.7C499.5 152.9 496 144.1 496 136C496 113.9 513.9 96 536 96S576 113.9 576 136z"/>
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -1288,6 +1346,7 @@ setTimeout(function(){
   openOverlay('help'); 
   runExample1(); 
   runExample2();
+  runExample3();
 }, 300);
 </script>
 
