@@ -1,0 +1,342 @@
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Wordle Solver</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Battambang:wght@700;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+<script src="main.js"></script>
+
+</head>
+
+<body onLoad="initializeTheme();">
+
+<div id="game">
+
+<!-- HEADER -->
+
+<header>
+  <div class="menu">
+    <button id="help-button" onClick="openOverlay(this.dataset.label); runExample1(); runExample2(); runExample3();" class="icon" data-label="help">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+        <path fill="var(--color-tone-1)" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"></path>
+      </svg>
+    </button>
+    <div id="menu-spacer"></div>
+  </div>
+  <div class="title">
+    Wordle Solver
+  </div>
+  <div class="menu">
+    <button id="solver-button" onClick="openOverlay(this.dataset.label)" class="icon" data-label="answers">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 576 512">
+        <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+        <path fill="var(--color-tone-1)" d="M576 136c0 22.09-17.91 40-40 40c-.248 0-.4551-.1266-.7031-.1305l-50.52 277.9C482 468.9 468.8 480 453.3 480H122.7c-15.46 0-28.72-11.06-31.48-26.27L40.71 175.9C40.46 175.9 40.25 176 39.1 176c-22.09 0-40-17.91-40-40S17.91 96 39.1 96s40 17.91 40 40c0 8.998-3.521 16.89-8.537 23.57l89.63 71.7c15.91 12.73 39.5 7.544 48.61-10.68l57.6-115.2C255.1 98.34 247.1 86.34 247.1 72C247.1 49.91 265.9 32 288 32s39.1 17.91 39.1 40c0 14.34-7.963 26.34-19.3 33.4l57.6 115.2c9.111 18.22 32.71 23.4 48.61 10.68l89.63-71.7C499.5 152.9 496 144.1 496 136C496 113.9 513.9 96 536 96S576 113.9 576 136z"/>
+      </svg>
+    </button>
+    <button id="settings-button" onClick="openOverlay(this.dataset.label)" class="icon" data-label="settings">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+        <path fill="var(--color-tone-1)" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- GUESSES -->
+
+<div id="board-container">
+  <div id="board">
+    <div id="row1" class="row unfilled" data-letters="">
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+    </div>
+    <div id="row2" class="row unfilled" data-letters="">
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+    </div>
+    <div id="row3" class="row unfilled" data-letters="">
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+    </div>
+    <div id="row4" class="row unfilled" data-letters="">
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+    </div>
+    <div id="row5" class="row unfilled" data-letters="">
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+    </div>
+    <div id="row6" class="row unfilled" data-letters="">
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+      <div onClick="setColor(this)" class="tile empty" data-state="-2" data-animation="idle"></div>
+    </div>
+  </div>
+</div>
+
+<!-- KEYBOARD -->
+
+<div id="keyboard">
+  <div class="row">
+    <button class="one" data-key="Q" onclick="getLetters(this.dataset.key)">q</button>
+    <button class="one" data-key="W" onclick="getLetters(this.dataset.key)">w</button>
+    <button class="one" data-key="E" onclick="getLetters(this.dataset.key)">e</button>
+    <button class="one" data-key="R" onclick="getLetters(this.dataset.key)">r</button>
+    <button class="one" data-key="T" onclick="getLetters(this.dataset.key)">t</button>
+    <button class="one" data-key="Y" onclick="getLetters(this.dataset.key)">y</button>
+    <button class="one" data-key="U" onclick="getLetters(this.dataset.key)">u</button>
+    <button class="one" data-key="I" onclick="getLetters(this.dataset.key)">i</button>
+    <button class="one" data-key="O" onclick="getLetters(this.dataset.key)">o</button>
+    <button class="one" data-key="P" onclick="getLetters(this.dataset.key)">p</button>
+  </div>
+  <div class="row">
+    <div class="spacer half"></div>
+    <button class="one" data-key="A" onclick="getLetters(this.dataset.key)">a</button>
+    <button class="one" data-key="S" onclick="getLetters(this.dataset.key)">s</button>
+    <button class="one" data-key="D" onclick="getLetters(this.dataset.key)">d</button>
+    <button class="one" data-key="F" onclick="getLetters(this.dataset.key)">f</button>
+    <button class="one" data-key="G" onclick="getLetters(this.dataset.key)">g</button>
+    <button class="one" data-key="H" onclick="getLetters(this.dataset.key)">h</button>
+    <button class="one" data-key="J" onclick="getLetters(this.dataset.key)">j</button>
+    <button class="one" data-key="K" onclick="getLetters(this.dataset.key)">k</button>
+    <button class="one" data-key="L" onclick="getLetters(this.dataset.key)">l</button>
+    <div class="spacer half"></div>
+  </div>
+  <div class="row">
+    <button id="enter" data-key="ENTER" class="one-and-a-half" onclick="getLetters(this.dataset.key)" disabled>enter</button>
+    <button class="one" data-key="Z" onclick="getLetters(this.dataset.key)">z</button>
+    <button class="one" data-key="X" onclick="getLetters(this.dataset.key)">x</button>
+    <button class="one" data-key="C" onclick="getLetters(this.dataset.key)">c</button>
+    <button class="one" data-key="V" onclick="getLetters(this.dataset.key)">v</button>
+    <button class="one" data-key="B" onclick="getLetters(this.dataset.key)">b</button>
+    <button class="one" data-key="N" onclick="getLetters(this.dataset.key)">n</button>
+    <button class="one" data-key="M" onclick="getLetters(this.dataset.key)">m</button>
+    <button data-key="BACKSPACE" class="one-and-a-half" onclick="getLetters(this.dataset.key)">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+        <path fill="var(--color-tone-1)" d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+
+<div class="overlay" id="settings">
+
+  <header>
+    <div class="menu"></div>
+    <div class="title">
+      SETTINGS
+    </div>
+    <div class="menu">
+      <button onClick="closeOverlay(this)" class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path fill="var(--color-tone-1)" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <div class="setting">
+      <div class="text">
+        <div class="title">Hard Mode</div>
+        <div class="description">Any revealed hints must be used in subsequent guesses</div>
+      </div>
+      <label class="switch">
+        <input class="check-box" onClick="toggleHardMode(this.checked)" id="hardmode" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <div class="text">
+        <div class="title">Dark Theme</div>
+      </div>
+      <label class="switch">
+        <input class="check-box" type="checkbox" id="nightmode" onClick="switchThemes(this)">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <div class="text">
+        <div class="title">High Contrast Mode</div>
+        <div class="description">For improved color vision</div>
+      </div>
+      <label class="switch">
+        <input class="check-box" onClick="switchThemes(this)" id="colorblind" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+  </div>
+</div>
+
+<!-- HELP -->
+
+<div class="overlay" id="help">
+
+  <header>
+    <div class="menu"></div>
+    <div class="title">
+      HOW TO USE THE SOLVER
+    </div>
+    <div class="menu">
+      <button onClick="closeOverlay(this)" class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path fill="var(--color-tone-1)" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">Enter your guess that you used on Wordle</div>
+      </div>
+    <div id="exampleRow1" class="row filled" data-letters="WEARY">
+      <div class="tile full" data-state="-2" data-animation="idle">W</div>
+      <div class="tile full" data-state="-2" data-animation="idle">E</div>
+      <div class="tile full" data-state="-2" data-animation="idle">A</div>
+      <div class="tile full" data-state="-2" data-animation="idle">R</div>
+      <div class="tile full" data-state="-2" data-animation="idle">Y</div>
+    </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">Click on each letter to change the color to what you received on Wordle</div>
+      </div>
+    <div id="exampleRow2" class="row filled" data-letters="PILLS">
+      <div class="tile full" data-state="-1" data-animation="idle">P</div>
+      <div class="tile full" data-state="-1" data-animation="idle">I</div>
+      <div class="tile full" data-state="-1" data-animation="idle">L</div>
+      <div class="tile full" data-state="-1" data-animation="idle">L</div>
+      <div class="tile full" data-state="-1" data-animation="idle">S</div>
+    </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">When all of the letters have been colored, the ENTER button will activate</div>
+      </div>
+      <div>
+        <button id="exampleEnter" disabled>enter</button>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">Hit ENTER and the Solver will tell you possible answers and the optimal next guess</div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">Click on the crown to return to the Solver page</div>
+      </div>
+      <div>
+        <button class="icon" data-label="answers">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 576 512">
+            <!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+            <path fill="var(--color-tone-1)" d="M576 136c0 22.09-17.91 40-40 40c-.248 0-.4551-.1266-.7031-.1305l-50.52 277.9C482 468.9 468.8 480 453.3 480H122.7c-15.46 0-28.72-11.06-31.48-26.27L40.71 175.9C40.46 175.9 40.25 176 39.1 176c-22.09 0-40-17.91-40-40S17.91 96 39.1 96s40 17.91 40 40c0 8.998-3.521 16.89-8.537 23.57l89.63 71.7c15.91 12.73 39.5 7.544 48.61-10.68l57.6-115.2C255.1 98.34 247.1 86.34 247.1 72C247.1 49.91 265.9 32 288 32s39.1 17.91 39.1 40c0 14.34-7.963 26.34-19.3 33.4l57.6 115.2c9.111 18.22 32.71 23.4 48.61 10.68l89.63-71.7C499.5 152.9 496 144.1 496 136C496 113.9 513.9 96 536 96S576 113.9 576 136z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="title">Repeat until you've solved the puzzle!</div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <div class="text">
+        <div class="description">Show  this page on startup?</div>
+      </div>
+      <div>
+        <label class="switch">
+          <input class="check-box" onClick="toggleStartInfo(this.checked)" id="startInfo" type="checkbox" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ANSWERS -->
+
+<div class="overlay" id="answers">
+
+  <header>
+    <div class="menu"></div>
+    <div class="title">
+      SOLVER!
+    </div>
+    <div class="menu">
+      <button onClick="closeOverlay(this)" class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+          <path fill="var(--color-tone-1)" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <div class="setting">
+      <div class="text">
+        <div class="title">Suggested Next Guess</div>
+        <div class="description" id="guessDiv">ROATE</div>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="text">
+        <div class="title">Possible Answers</div>
+        <div class="description" id="answerDiv"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="warning" id="bad-word">Not in word list</div>
+<div class="warning" id="bad-color">Color each letter</div>
+
+</div>
+
+<script>
+  startFunctions();
+</script>
+
+</body>
+</html>

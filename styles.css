@@ -1,0 +1,589 @@
+/* Similar font to what the NYTimes uses */
+@font-face {
+  font-family: 'KarnakPro-CondensedBlack';
+  src: url('karnakpro-condensedblack.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Global Styles & Colors */
+:root {
+  --green: #6aaa64;
+  --darkendGreen: #538d4e;
+  --yellow: #c9b458;
+  --darkendYellow: #b59f3b;
+  --lightGray: #d8d8d8;
+  --gray: #86888a;
+  --darkGray: #939598;
+  --white: #fff;
+  --black: #212121;
+/* Colorblind colors */
+  --orange: #f5793a;
+  --blue: #85c0f9;
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  --header-height: 50px;
+  --keyboard-height: 200px;
+  --game-max-width: 500px;
+}
+/* Light theme colors */
+:root {
+  --color-tone-1: #000000;
+  --color-tone-2: #787c7e;
+  --color-tone-3: #878a8c;
+  --color-tone-4: #d3d6da;
+  --color-tone-5: #edeff1;
+  --color-tone-6: #f6f7f8;
+  --color-tone-7: #ffffff;
+  --opacity-50: rgba(255, 255, 255, 0.5);
+}
+/* Dark Theme Colors */
+.nightmode {
+  --color-tone-1: #ffffff;
+  --color-tone-2: #818384;
+  --color-tone-3: #565758;
+  --color-tone-4: #3a3a3c;
+  --color-tone-5: #272729;
+  --color-tone-6: #1a1a1b;
+  --color-tone-7: #121213;
+  --opacity-50: rgba(0, 0, 0, 0.5);
+}
+/* Constant colors and colors derived from theme */
+:root,
+.nightmode {
+  --color-background: var(--color-tone-7);
+}
+:root {
+  --color-present: var(--yellow);
+  --color-correct: var(--green);
+  --color-absent: var(--color-tone-2);
+  --tile-text-color: var(--color-tone-7);
+  --key-text-color: var(--color-tone-1);
+  --key-evaluated-text-color: var(--color-tone-7);
+  --key-bg: var(--color-tone-4);
+  --key-bg-present: var(--color-present);
+  --key-bg-correct: var(--color-correct);
+  --key-bg-absent: var(--color-absent);
+  --modal-content-bg: var(--color-tone-7);
+  --key-bg-disabled: var(--color-tone-5);
+  --key-text-disabled: var(--color-tone-3);
+}
+.nightmode {
+  --color-present: var(--darkendYellow);
+  --color-correct: var(--darkendGreen);
+  --color-absent: var(--color-tone-4);
+  --tile-text-color: var(--color-tone-1);
+  --key-text-color: var(--color-tone-1);
+  --key-evaluated-text-color: var(--color-tone-1);
+  --key-bg: var(--color-tone-2);
+  --key-bg-present: var(--color-present);
+  --key-bg-correct: var(--color-correct);
+  --key-bg-absent: var(--color-absent);
+  --modal-content-bg: var(--color-tone-7);
+  --key-bg-disabled: var(--color-tone-5);
+  --key-text-disabled: var(--color-tone-3);
+}
+.colorblind {
+  --color-correct: var(--orange);
+  --color-present: var(--blue);
+  --tile-text-color: var(--white);
+  --key-bg-present: var(--color-present);
+  --key-bg-correct: var(--color-correct);
+  --key-bg-absent: var(--color-absent);
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  background-color: var(--color-background);
+  margin: 0;
+  padding: 0;
+  /* Prevent scrollbar appearing on page transition */
+  overflow-y: hidden;
+}
+#game {
+  width: 100%;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 0 1 0;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--header-height);
+  color: var(--color-tone-1);
+  border-bottom: 1px solid var(--color-tone-4);
+  width: calc(100% - 32px);
+  padding: 0 16px;
+}
+header .title {
+  font-family: 'KarnakPro-CondensedBlack', 'Battambang', san-serif;
+  font-weight: 900;
+  font-size: 36px;
+  letter-spacing: 0.01rem;
+  text-align: center;
+  pointer-events: none;
+}
+@media (max-width: 360px) {
+  header .title {
+    font-size: 24px;
+    letter-spacing: 0.01rem;
+  }
+}
+.menu {
+  display: flex;
+  align-items: center;
+}
+#board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 0;
+  overflow: hidden;
+  max-width: var(--game-max-width);
+  width: 100%;
+}
+#board {
+  width: 297px;
+  height: 354px;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  grid-gap: 5px;
+  padding:10px;
+  box-sizing: border-box;
+}
+@media (orientation:portrait) {
+  #board {
+    width: calc(84vh - 216px);
+    height: 100%;
+    max-width: 90%;
+    max-height: calc(100vh - 260px);
+  }
+}
+.icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+#debug-tools {
+  position: absolute;
+  bottom: 0;
+}
+
+#board .row {
+  display: block;
+}
+#board .row([invalid]) {
+  animation-name: Shake;
+  animation-duration: 600ms;
+}
+#board .row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 5px;
+}
+
+@keyframes Shake {
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+  20%,
+  80% {
+    transform: translateX(2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-4px);
+  }
+  40%,
+  60% {
+    transform: translateX(4px);
+  }
+}
+
+.tile {
+  width: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  line-height: 2rem;
+  font-weight: bold;
+  vertical-align: middle;
+  box-sizing: border-box;
+  color: var(--tile-text-color);
+  text-transform: uppercase;
+  user-select: none;
+}
+.tile::before {
+  content: '';
+  display: inline-block;
+  padding-bottom: 100%;
+}
+
+/* Allow tiles to be smaller on small screens */
+@media (max-height: 600px) {
+  .tile {
+    font-size: 1em;
+    line-height: 1em;
+  }
+}
+.tile[data-state='-2'] {
+  border: 2px solid var(--color-tone-4);
+  color: var(--color-tone-7);
+}
+.tile[data-state='-1'] {
+  background-color: var(--color-tone-7);
+  border: 2px solid var(--color-tone-3);
+  color: var(--color-tone-1);
+}
+.tile[data-state='2'] {
+  background-color: var(--color-correct);
+}
+.tile[data-state='1'] {
+  background-color: var(--color-present);
+}
+.tile[data-state='0'] {
+  background-color: var(--color-absent);
+}
+.tile[data-animation='pop'] {
+  animation-name: PopIn;
+  animation-duration: 100ms;
+}
+@keyframes PopIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+.tile[data-animation='flip-in'] {
+  animation-name: FlipIn;
+  animation-duration: 250ms;
+  animation-timing-function: ease-in;
+}
+@keyframes FlipIn {
+  0% {
+    transform: rotateX(0);
+  }
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+.tile[data-animation='flip-out'] {
+  animation-name: FlipOut;
+  animation-duration: 250ms;
+  animation-timing-function: ease-in;
+}
+@keyframes FlipOut {
+  0% {
+    transform: rotateX(-90deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+#keyboard {
+  margin: 0;
+  user-select: none;
+  height: var(--keyboard-height);
+  max-width: var(--game-max-width);
+  width: 100%;
+}
+#keyboard .row {
+  padding: 0 8px;
+  display: flex;
+  margin: 0 auto 8px;
+  /* https://stackoverflow.com/questions/46167604/ios-html-disable-double-tap-to-zoom */
+  touch-action: manipulation;
+}
+#keyboard .row button, #exampleEnter {
+  font-family: inherit;
+  font-weight: bold;
+  border: 0;
+  padding: 0;
+  margin: 0 6px 0 0;
+  height: 58px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  background-color: var(--key-bg);
+  color: var(--key-text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  -webkit-tap-highlight-color: rgba(0,0,0,0.3);
+}
+#keyboard .row button:focus {
+  outline: none;
+}
+#keyboard .row button.fade {
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+#keyboard .row button:last-of-type {
+  margin: 0;
+}
+#keyboard .row button[data-state='correct'] {
+  background-color: var(--key-bg-correct);
+  color: var(--key-evaluated-text-color);
+}
+#keyboard .row button[data-state='present'] {
+  background-color: var(--key-bg-present);
+  color: var(--key-evaluated-text-color);
+}
+#keyboard .row button[data-state='absent'] {
+  background-color: var(--key-bg-absent);
+  color: var(--key-evaluated-text-color);
+}
+.half {
+  flex: 0.5;
+}
+.one {
+  flex: 1;
+}
+.one-and-a-half {
+  flex: 1.5;
+  font-size: 12px;
+}
+.two {
+  flex: 2;
+}
+
+.overlay {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  background-color: var(--color-background);
+  z-index: -999;
+  opacity: 0;
+}
+.overlay.open {
+  animation: SlideIn 100ms linear;
+  z-index: 999;
+  opacity: 1;
+}
+.overlay.closing {
+  animation: SlideOut 150ms linear;
+}
+.overlay header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+.overlay .content {
+  position: relative;
+  color: var(--color-tone-1);
+  max-width: var(--game-max-width);
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+  .overlay .content {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+@keyframes SlideIn {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+    z-index: 999;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+    z-index: 999;
+  }
+}
+@keyframes SlideOut {
+  0% {
+    transform: translateY(0px);
+    opacity: 1;
+    z-index: 999;
+  }
+  90% {
+    opacity: 0;
+    z-index: 999;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(60px);
+    z-index: -999;
+  }
+}
+.setting, .instructions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-tone-4);
+  padding: 16px 0;
+}
+.overlay header .title {
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+.overlay .content .title {
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+}
+.overlay .text {
+  padding-right: 8px;
+}
+.overlay .description {
+  font-size: 12px;
+  color: var(--color-tone-2);
+}
+#answers .description {
+  padding-top: 8px;
+  font-size: 14px;
+}
+.instructions {
+  width: 100%;
+}
+.instructions .text .title {
+  width: 100%;
+  font-size: 16px;
+}
+.instructions .text {
+  width: 50%;
+}
+.instructions .row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 5px;
+  width: 50%;
+}
+.instructions .tile {
+  font-size: 1em;
+  line-height: 1em;
+}
+.warning {
+  position: absolute;
+  background: var(--color-tone-1);
+  color: var(--color-tone-7);
+  width: 175px;
+  height: 50px;
+  top: 12vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 5px;
+  z-index: -999;
+  opacity: 0;
+}
+@keyframes Flash {
+  0% {
+    opacity: 0;
+    z-index: 999;
+  }
+  5% {
+    opacity: 1;
+    z-index: 999;
+  }
+  80% {
+    opacity: 1;
+    z-index: 999;
+  }
+  99% {
+    opacity: 0;
+    z-index: 999;
+  }
+  100% {
+    opacity: 0;
+    z-index: -999;
+  }
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+.switch {
+  position: relative;
+  display: block;
+  width: 32px;
+  height: 20px;
+}
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  border-radius: 20px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-tone-3);
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s;
+}
+input:checked + .slider {
+  background-color: var(--color-correct);
+}
+input:checked + .slider:before {
+  transform: translateX(12px);
+}
+.slider.round {
+}
+.slider.round:before {
+}
+@media (orientation:portrait) {
+  .overlay .content {
+    width: 95%;
+  }
+}
+#keyboard button:disabled, #keyboard button[disabled], #exampleEnter:disabled, #exampleEnter[disabled] {
+  background: var(--key-bg-disabled);
+  color: var(--key-text-disabled);
+}
+#exampleEnter {
+  height: 50px;
+  width: 75px;
+}
+#exampleEnter:disabled, #exampleEnter[disabled], #keyboard button:disabled, #keyboard button[disabled] {
+  cursor: not-allowed;
+}
+#menu-spacer {
+  width: 30.5px;
+}
