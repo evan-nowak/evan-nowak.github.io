@@ -121,7 +121,7 @@ var badComplaints = [
       var complaint = 'complaint_type!="' + badComplaints[i] + '"';
       complaints.push(complaint);
     }
-    complaints = '(' + complaints.join(" OR ") + ')';
+    complaints = '(' + complaints.join(" AND ") + ')';
     console.log(777);
    
     var startDate = 'created_date>="' + document.getElementById('startDate').value + '"';
