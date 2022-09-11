@@ -24,41 +24,76 @@
 
 <script>
 var complaintList = [
- 'Street Sign - Missing',
- 'Bridge Condition',
- 'Highway Sign - Missing',
- 'Beach/Pool/Sauna Complaint',
- 'Broken Parking Meter',
- 'Highway Condition',
- 'DEP Street Condition',
- 'Illegal Tree Damage',
- 'Highway Sign - Damaged',
- 'General Construction/Plumbing',
- 'Scaffold Safety',
- 'Highway Sign - Dangling',
- 'Traffic Signal Condition',
- 'Vacant Lot',
- 'Building Condition',
- 'Cooling Tower',
- 'Public Toilet',
- 'Dead/Dying Tree',
- 'Street Condition',
- 'Bus Stop Shelter Complaint',
- 'Sewer',
- 'Root/Sewer/Sidewalk Condition',
- 'Plant',
- 'Overgrown Tree/Branches',
- 'Sidewalk Condition',
- 'Damaged Tree',
- 'FLOORING/STAIRS',
- 'Bus Stop Shelter Placement',
- 'Uprooted Stump',
- 'Curb Condition',
- 'DEP Sidewalk Condition',
- 'Street Light Condition',
- 'Bike Rack Condition',
- 'Street Sign - Dangling',
- 'Street Sign - Damaged'
+  'Street Sign - Missing',
+  'Bridge Condition',
+  'Highway Sign - Missing',
+  'Beach/Pool/Sauna Complaint',
+  'Broken Parking Meter',
+  'Highway Condition',
+  'DEP Street Condition',
+  'Illegal Tree Damage',
+  'Highway Sign - Damaged',
+  'General Construction/Plumbing',
+  'Scaffold Safety',
+  'Highway Sign - Dangling',
+  'Traffic Signal Condition',
+  'Vacant Lot',
+  'Building Condition',
+  'Cooling Tower',
+  'Public Toilet',
+  'Dead/Dying Tree',
+  'Street Condition',
+  'Bus Stop Shelter Complaint',
+  'Sewer',
+  'Root/Sewer/Sidewalk Condition',
+  'Plant',
+  'Overgrown Tree/Branches',
+  'Sidewalk Condition',
+  'Damaged Tree',
+  'FLOORING/STAIRS',
+  'Bus Stop Shelter Placement',
+  'Uprooted Stump',
+  'Curb Condition',
+  'DEP Sidewalk Condition',
+  'Street Light Condition',
+  'Bike Rack Condition',
+  'Street Sign - Dangling',
+  'Street Sign - Damaged'
+]
+var badComplaints = [
+  'Adopt-A-Basket',
+  'Animal Facility - No Permit',
+  'Calorie Labeling',
+  'Day Care',
+  'Dept of Investigations',
+  'Disorderly Youth',
+  'Drug Activity',
+  'Drinking',
+  'Encampment',
+  'Found Property',
+  'Graffiti',
+  'Homeless Person Assistance',
+  'Incorrect Data',
+  'Internal Code',
+  'Lost Property',
+  'New Tree Request',
+  'Noise',
+  'Noise - Commercial',
+  'Noise - Helicopter',
+  'Noise - House of Worship',
+  'Noise - Park',
+  'Noise - Residential',
+  'Noise - Street/Sidewalk',
+  'Noise - Vehicle',
+  'Panhandling',
+  'Private School Vaccine Mandate Non-Compliance',
+  'Posting Advertisement',
+  'Real Time Enforcement',
+  'Smoking',
+  'Tattooing',
+  'ZTESTINT',
+  'Urinating in Public',
+  'Violation of Park Rules'
 ]
 </script>
 
@@ -81,6 +116,14 @@ var complaintList = [
     }
     complaints = '(' + complaints.join(" OR ") + ')';
 
+    var complaints = [];
+    for (var i=0; i<badComplaints.length; i++) {
+      var complaint = 'complaint_type!="' + badComplaints[i] + '"';
+      complaints.push(complaint);
+    }
+    complaints = '(' + complaints.join(" OR ") + ')';
+    console.log(777);
+   
     var startDate = 'created_date>="' + document.getElementById('startDate').value + '"';
     var endDate = 'created_date<="' + document.getElementById('endDate').value + '"';
 
